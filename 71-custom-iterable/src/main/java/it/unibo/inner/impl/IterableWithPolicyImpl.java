@@ -16,9 +16,15 @@ public class IterableWithPolicyImpl<T> implements IterableWithPolicy<T> {
         this.filter = filter;
 
     }
-   // public IterableWithPolicyImpl(T[] array) {
-    //    this.(array, new PredicateImpl<T>().test(null));
-   // }
+    public IterableWithPolicyImpl(T[] array) {
+        this(array, new Predicate<T>(){
+                @Override
+                public boolean test(T elem) {
+                return true;
+                }
+            }
+        );
+    }
 
 
     @Override
@@ -46,10 +52,6 @@ public class IterableWithPolicyImpl<T> implements IterableWithPolicy<T> {
                 throw new NoSuchElementException();
             }
             return array[idx++];
-        }
-        public boolean respectsPolicy(){
-
-
         }
     }
 }
