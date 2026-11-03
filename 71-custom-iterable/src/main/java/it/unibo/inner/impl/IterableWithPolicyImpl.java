@@ -1,44 +1,55 @@
 package it.unibo.inner.impl;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import it.unibo.inner.api.IterableWithPolicy;
 import it.unibo.inner.api.Predicate;
 
-public class IterableWithPolicyImpl<T> implements IterableWithPolicy{
+public class IterableWithPolicyImpl<T> implements IterableWithPolicy<T> {
 
-    private T array[];
+    private final T[] array;
+    private Predicate<T> filter;
 
-    public IterableWithPolicyImpl(T[] array) {
+    public IterableWithPolicyImpl(T[] array,Predicate<T> filter) {
         this.array = array;
+        this.filter = filter;
+
     }
+   // public IterableWithPolicyImpl(T[] array) {
+    //    this.(array, new PredicateImpl<T>().test(null));
+   // }
+
+
     @Override
-    public void setIterationPolicy(Predicate filter) {
-        // TODO Auto-generated method stub
+    public void setIterationPolicy(Predicate<T> filter) {
         
     }
 
     @Override
-    public Iterator iterator() {
-        return new IteratorWS<>();
+    public Iterator<T> iterator() {
+        return new IteratorWS();
     }
 
-    public class IteratorWS<T> implements Iterator{
+    private class IteratorWS implements Iterator<T> {
 
-        private int idx=0;
+        private int idx = 0;
 
         @Override
         public boolean hasNext() {
-            return idx<(array.length-1);
+            return idx < array.length;
         }
 
         @Override
-        public Object next() {
-            
-            idx++;
-            return array[idx];
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return array[idx++];
         }
+        public boolean respectsPolicy(){
 
+
+        }
     }
-    
 }
