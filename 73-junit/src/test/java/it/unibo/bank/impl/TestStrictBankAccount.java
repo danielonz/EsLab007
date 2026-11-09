@@ -5,23 +5,29 @@ import it.unibo.bank.api.BankAccount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Test class for the {@link StrictBankAccount} class.
  */
 class TestStrictBankAccount {
+    private static final int AMOUNT = 100;
+    private static final int ACCEPTABLE_MESSAGE_LENGTH = 10;
 
     // Create a new AccountHolder and a StrictBankAccount for it each time tests are executed.
     private AccountHolder mRossi;
-    private BankAccount bankAccount;
+    private StrictBankAccount strictBankAccount;
 
     /**
      * Prepare the tests.
      */
     @BeforeEach
     public void setUp() {
-        fail("To be implemented");
+        this.mRossi = new AccountHolder("Mario", "Rossi", 1);
+        this.strictBankAccount = new StrictBankAccount(mRossi, 0.0);
     }
 
     /**
@@ -29,7 +35,9 @@ class TestStrictBankAccount {
      */
     @Test
     public void testInitialization() {
-        fail("To be implemented");
+        assertEquals(mRossi, strictBankAccount.getAccountHolder());
+        assertEquals(0.0, strictBankAccount.getBalance());
+        assertEquals(0, strictBankAccount.getTransactionsCount());
     }
 
     /**
@@ -37,7 +45,12 @@ class TestStrictBankAccount {
      */
     @Test
     public void testManagementFees() {
-        fail("To be implemented");
+        strictBankAccount.deposit(1, AMOUNT);
+        strictBankAccount.chargeManagementFees(1);
+        assertEquals(AMOUNT-strictBankAccount.MANAGEMENT_FEE-
+            (strictBankAccount.TRANSACTION_FEE*
+            (strictBankAccount.getTransactionsCount()+1)),
+            strictBankAccount.getBalance());
     }
 
     /**
@@ -45,7 +58,15 @@ class TestStrictBankAccount {
      */
     @Test
     public void testNegativeWithdraw() {
-        fail("To be implemented");
+        //depositing an amount to be sure that the problem is made by the negative
+        //amount of money, not from withdrawing too much :)
+        strictBankAccount.deposit(1, AMOUNT);
+        try {
+            strictBankAccount.withdraw(1,-AMOUNT);
+            Assertions.fail("it shouldnt be possible to withdraw a negative amount");
+        } catch (final IllegalArgumentException e) {
+            Assertions.assertTrue(true);
+        }
     }
 
     /**
@@ -53,6 +74,13 @@ class TestStrictBankAccount {
      */
     @Test
     public void testWithdrawingTooMuch() {
-        fail("To be implemented");
+        strictBankAccount.deposit(1, AMOUNT*2);
+        try {
+            strictBankAccount.withdraw(1, AMOUNT);
+            Assertions.fail("it shouldnt be possible to withdraw more than the deposited");
+        } catch (final IllegalArgumentException e) {
+            Assertions.assertTrue(true);
+        }
+       
     }
 }
